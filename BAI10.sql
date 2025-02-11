@@ -98,10 +98,18 @@ order by Avg_Mark desc;
 update subjects
 set subjectName = concat('Day la mon hoc ', subjectName);
 
-create trigger check_student_age
-before insert on students
-for each row
-    set new.age = if(NEW.age BETWEEN 16 AND 49, NEW.age, NULL);
+DELIMITER //
+	create trigger check_student_age
+    before insert on students
+    for each row
+    begin 
+	if new.age <= 15 or new.age >= 50
+        then signal sqlstate '4500'
+        set message_text = 'tuổi của học sinh phải lớn hơn 15 và nhỏ 50';
+        end if;
+	end;
+//
+DELIMITER ;
 
 SELECT TABLE_NAME, CONSTRAINT_NAME
 FROM information_schema.KEY_COLUMN_USAGE
