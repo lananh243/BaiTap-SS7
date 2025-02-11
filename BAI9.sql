@@ -79,14 +79,23 @@ where So_ghe like 'A%';
 alter table tblPhong
 modify column Trang_thai varchar(25);
 
-update tblPhong
-set Trang_thai = 
-    case 
-        when Trang_thai = '0' then 'Đang sửa'
-        when Trang_thai = '1' then 'Đang sử dụng'
-        when Trang_thai IS NULL then 'Unknow'
-        else Trang_thai 
-    end;
+DELIMITER //
+CREATE PROCEDURE UpdateAndShowPhong()
+BEGIN
+    UPDATE tblPhong 
+    SET Trang_Thai = CASE 
+        WHEN Trang_Thai = '0' THEN 'Đang sửa'
+        WHEN Trang_Thai = '1' THEN 'Đang sử dụng'
+        ELSE 'Unknow'
+    END;
+    
+    SELECT * FROM tblPhong;
+END 
+//
+DELIMITER ;
+
+CALL UpdateAndShowPhong();
+
 SELECT * FROM tblPhong;
 
 select * from tblPhim 
